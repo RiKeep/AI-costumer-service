@@ -1,6 +1,5 @@
 package com.ri.artificial.context;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import cn.hutool.http.HttpStatus;
 
@@ -10,19 +9,16 @@ import cn.hutool.http.HttpStatus;
  */
 @Data
 public class Result<T> {
-    @Schema(description = "状态码")
     private Integer code;
-    @Schema(description = "返回信息")
     private String msg;
-    @Schema(description = "返回数据")
     private T data;
 
     public static <T> Result<T> success() {
-        return success(HttpStatus.HTTP_OK, "操作成功", null);
+        return success(HttpStatus.HTTP_OK, "ok", null);
     }
 
     public static <T> Result<T> success(T data) {
-        return success(HttpStatus.HTTP_OK, "操作成功", data);
+        return success(HttpStatus.HTTP_OK, "ok", data);
     }
 
     public static <T> Result<T> success(String msg) {
@@ -46,11 +42,11 @@ public class Result<T> {
     }
 
     public static <T> Result<T> error() {
-        return error(HttpStatus.HTTP_BAD_REQUEST, "操作失败", null);
+        return error(HttpStatus.HTTP_BAD_REQUEST, "error", null);
     }
 
     public static <T> Result<T> error(T data) {
-        return error(HttpStatus.HTTP_BAD_REQUEST, "操作失败", data);
+        return error(HttpStatus.HTTP_BAD_REQUEST, "error", data);
     }
 
     public static <T> Result<T> error(String msg) {
