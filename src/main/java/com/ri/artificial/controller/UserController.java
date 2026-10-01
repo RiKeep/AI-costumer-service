@@ -1,10 +1,12 @@
 package com.ri.artificial.controller;
 
-import cn.dev33.satoken.stp.StpUtil;
+import com.ri.artificial.context.Result;
+import com.ri.artificial.domain.dto.LoginFormDTO;
+import com.ri.artificial.domain.vo.UserLoginVO;
+import com.ri.artificial.service.IUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Ri
@@ -14,18 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
-    @GetMapping("/login")
-    public String login(String username, String password) {
-        // 此处仅作模拟示例，真实项目需要从数据库中查询数据进行比对
-        if("zhang".equals(username) && "123456".equals(password)) {
-            StpUtil.login(10001);
-            return "登录成功";
-        }
-        return "登录失败";
+
+    private final IUserService userService;
+
+    @PostMapping("/login")
+    public Result<UserLoginVO> login(@RequestBody @Validated LoginFormDTO loginFormDTO) {
+        return userService.login(loginFormDTO);
     }
+
     @GetMapping("/logout")
-    public String logout() {
-        StpUtil.logout(10001);
-        return "注销成功";
+    public Result<String> logout(Integer userId) {
+        return userService.logout(userId);
     }
 }
