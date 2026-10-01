@@ -1,8 +1,7 @@
 package com.ri.artificial.domain.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * @author Ri
@@ -11,9 +10,6 @@ import java.util.List;
 @Data
 public class ChatRequest {
     private String sessionId;
+    @NotBlank(message = "消息不能为空")
     private String message;
-    private Boolean deepThink;
-    private Boolean rag;
-    private List<Long> docIds;
-    private String createTime;
 }

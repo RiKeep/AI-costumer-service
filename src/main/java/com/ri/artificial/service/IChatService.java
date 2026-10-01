@@ -11,6 +11,6 @@ import reactor.core.publisher.Flux;
  * @date 2026-10-01 11:12
  */
 public interface IChatService {
-    Flux<ServerSentEvent<String>> chatCall(ChatRequest chatRequest);
+    Flux<ServerSentEvent<String>> deepThinkChatCall(ChatRequest chatRequest, Integer userId);
 }
 
