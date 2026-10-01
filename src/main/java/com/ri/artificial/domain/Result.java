@@ -1,4 +1,4 @@
-package com.ri.artificial.context;
+package com.ri.artificial.domain;
 
 import lombok.Data;
 import cn.hutool.http.HttpStatus;

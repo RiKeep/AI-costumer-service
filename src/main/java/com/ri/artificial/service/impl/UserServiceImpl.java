@@ -3,7 +3,7 @@ package com.ri.artificial.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ri.artificial.context.Result;
+import com.ri.artificial.domain.Result;
 import com.ri.artificial.domain.dto.LoginFormDTO;
 import com.ri.artificial.domain.po.User;
 import com.ri.artificial.domain.vo.UserLoginVO;

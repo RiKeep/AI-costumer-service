@@ -1,6 +1,6 @@
 package com.ri.artificial.controller;
 
-import com.ri.artificial.context.Result;
+import com.ri.artificial.domain.Result;
 import com.ri.artificial.domain.dto.LoginFormDTO;
 import com.ri.artificial.domain.vo.UserLoginVO;
 import com.ri.artificial.service.IUserService;

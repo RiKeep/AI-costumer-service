@@ -1,9 +1,8 @@
 package com.ri.artificial.advice;
 
 import cn.dev33.satoken.exception.NotLoginException;
-import cn.dev33.satoken.exception.SaTokenException;
 import cn.hutool.http.HttpStatus;
-import com.ri.artificial.context.Result;
+import com.ri.artificial.domain.Result;
 import com.ri.artificial.exception.CommonException;
 import lombok.extern.slf4j.Slf4j;
 
