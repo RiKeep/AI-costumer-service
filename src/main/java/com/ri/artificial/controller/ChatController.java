@@ -1,9 +1,11 @@
 package com.ri.artificial.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
+import com.ri.artificial.domain.Result;
 import com.ri.artificial.domain.dto.ChatRequest;
-import com.ri.artificial.domain.vo.SseMessage;
+import com.ri.artificial.domain.vo.ChatAnswerVO;
+import com.ri.artificial.service.IChatService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
@@ -17,20 +19,16 @@ import reactor.core.publisher.Flux;
 @RequiredArgsConstructor
 @RequestMapping("/ai/chat")
 public class ChatController {
-    private final ChatClient chatClient;
+    private final IChatService chatService;
 
-    @PostMapping("/call")
-    public String chat(@RequestBody ChatRequest chatRequest) {
-        return chatClient.prompt(chatRequest.getMessage())
-                .call()
-                .content();
+    @PostMapping
+    public Result<ChatAnswerVO> chat(@RequestBody ChatRequest chatRequest) {
+        return chatService.chat(chatRequest, StpUtil.getLoginIdAsInt());
     }
 
     @PostMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ServerSentEvent<String>> flux(@RequestBody ChatRequest chatRequest) {
-        return chatClient.prompt(chatRequest.getMessage())
-                .stream()
-                .content()
-                .map(content -> ServerSentEvent.builder(new SseMessage("content", content).toJson()).build());
+    public Flux<ServerSentEvent<String>> stream(@RequestBody ChatRequest chatRequest) {
+
+        return chatService.stream(chatRequest, StpUtil.getLoginIdAsInt());
     }
 }
