@@ -21,7 +21,7 @@ import com.ri.artificial.mapper.SysKnowledgeMapper;
 import com.ri.artificial.service.IKnowledgeService;
 import com.ri.artificial.splitter.DocumentSplitter;
 import com.ri.artificial.splitter.SplitterRegistry;
-import com.ri.artificial.utils.OssClient;
+import com.ri.artificial.utils.OssClientUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
@@ -53,7 +53,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<SysKnowledgeMapper, SysKno
     /** 预览接口最多返回的分片数：防止大文件产生几千片撑爆响应 */
     private static final int PREVIEW_MAX_CHUNKS = 100;
 
-    private final OssClient ossClient;
+    private final OssClientUtil ossClient;
 
     private final VectorStore vectorStore;
 
@@ -231,14 +231,18 @@ public class KnowledgeServiceImpl extends ServiceImpl<SysKnowledgeMapper, SysKno
     }
 
     @Override
-    public List<String> listVectorIds(List<Integer> docIds) {
+    public List<String> listVectorIds(List<Long> docIds) {
         Integer userId = StpUtil.getLoginIdAsInt();
         // 根据 docIds 拿到该用户的知识库文件
         List<SysKnowledge> list = lambdaQuery().in(SysKnowledge::getId, docIds)
                 .eq(SysKnowledge::getUserId, userId)
                 .list();
 
-        // 如果有则把所有 vectorId 舞吧
+        // 如果没有，则直接返回空列表
+        if(CollUtil.isEmpty(list)) {
+            return CollUtil.empty(List.class);
+        }
+        // 如果有则把所有 vectorId 返回
         return list.stream().map(SysKnowledge::getVectorId)
                 .filter(StrUtil::isNotBlank)
                 .distinct().toList();

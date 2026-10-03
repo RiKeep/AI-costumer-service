@@ -40,6 +40,6 @@ public interface IKnowledgeService extends IService<SysKnowledge> {
     /**
      * 查询对应的知识库列表ID
      */
-    List<String> listVectorIds(List<Integer> docIds);
+    List<String> listVectorIds(List<Long> docIds);
 }
 
