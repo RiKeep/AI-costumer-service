@@ -2,6 +2,7 @@ package com.ri.artificial.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ri.artificial.domain.po.ChatHistory;
+import com.ri.artificial.domain.po.ChatMessage;
 
 import java.util.List;
 

@@ -3,6 +3,7 @@ package com.ri.artificial.service.impl;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ri.artificial.domain.po.ChatHistory;
+import com.ri.artificial.domain.po.ChatMessage;
 import com.ri.artificial.mapper.ChatHistoryMapper;
 import com.ri.artificial.service.IChatHistoryService;
 import com.ri.artificial.service.IChatMessageService;
