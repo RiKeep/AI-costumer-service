@@ -17,7 +17,7 @@ import java.util.List;
 public class TokenSplitter implements DocumentSplitter {
     @Override
     public String name() {
-        return "Token分片";
+        return "Token";
     }
 
     @Override

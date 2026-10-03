@@ -20,7 +20,7 @@ public class FixedLengthSplitter implements DocumentSplitter {
 
     @Override
     public String name() {
-        return "固定字符分片";
+        return "Fixed";
     }
 
     @Override
@@ -38,12 +38,16 @@ public class FixedLengthSplitter implements DocumentSplitter {
 
     @Override
     public List<Document> split(List<Document> documents, SplitterForm params) {
+        // overlap 必须 < chunkSize：等于时 start 永不前进（死循环），大于时 substring 负数下标直接抛异常
+        int chunkSize = params.getChunkSize();
+        int overlap = Math.min(params.getOverlap(), chunkSize - 1);
+
         List<Document> result = new ArrayList<>();
         for (Document document : documents) {
             String text = document.getText();
             int start = 0;
             while (start < text.length()) {
-                int end = Math.min(start + params.getChunkSize(), text.length());
+                int end = Math.min(start + chunkSize, text.length());
                 String chunk = text.substring(start, end);
 
                 Map<String, Object> meta = new HashMap<>(document.getMetadata());
@@ -55,7 +59,7 @@ public class FixedLengthSplitter implements DocumentSplitter {
                 if (end == text.length()) {
                     break;
                 }
-                start = end - params.getOverlap();
+                start = end - overlap;
             }
         }
         return result;

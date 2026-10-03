@@ -22,7 +22,7 @@ public class SentenceSplitter implements DocumentSplitter {
             Pattern.compile("(?<=[。！？.!?])");
 
     @Override
-    public String name() { return "段落分片"; }
+    public String name() { return "Sentence"; }
 
     @Override
     public String description() {

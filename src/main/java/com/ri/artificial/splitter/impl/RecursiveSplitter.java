@@ -31,7 +31,7 @@ public class RecursiveSplitter implements DocumentSplitter {
     );
 
     @Override
-    public String name() { return "递归轮询分片"; }
+    public String name() { return "Recursive"; }
 
     @Override
     public String description() { return "按 段落→行→句→词 逐级切分，工业界默认方案"; }
