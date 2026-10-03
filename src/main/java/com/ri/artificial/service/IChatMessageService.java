@@ -22,13 +22,13 @@ public interface IChatMessageService extends IService<ChatMessage> {
     void deleteByHistoryId(Integer userId, Integer historyId);
 
     /**
-     *  todo 删除该时间下面的所有消息(删除该时间后面所有的会话)。
+     *  删除该时间下面的所有消息(删除该时间后面所有的会话)。
      */
     void deleteMessagesAfterTime(Integer userId, Integer messageId, Integer historyId);
 
     /**
      *  todo 重新回答该用户的问题(需要清空上一次回答记录)。
      */
-    void reAnswerUserMessage(Integer userId, Integer messageId, Integer historyId);
+    void reAnswerUserMessage(Integer userId, Integer messageId, Integer historyId, String message);
 }
 

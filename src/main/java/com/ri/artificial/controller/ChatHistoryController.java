@@ -58,6 +58,13 @@ public class ChatHistoryController {
         return Result.success();
     }
 
+    @DeleteMapping("/del/after-time/{messageId}/{historyId}")
+    public Result<String> deleteAfterTimeMsg(@PathVariable("messageId")Integer messageId,
+    @PathVariable("historyId") Integer historyId) {
+        chatMessageService.deleteMessagesAfterTime(StpUtil.getLoginIdAsInt(), messageId, historyId);
+        return Result.success();
+    }
+
     @DeleteMapping("/del/{id}")
     public Result<String> deleteHistory(@PathVariable Integer id) {
         chatHistoryService.deleteChatHistory(StpUtil.getLoginIdAsInt(), id);

@@ -28,7 +28,6 @@ public class ChatController {
 
     @PostMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<String>> stream(@RequestBody ChatRequest chatRequest) {
-
         return chatService.stream(chatRequest, StpUtil.getLoginIdAsInt());
     }
 }

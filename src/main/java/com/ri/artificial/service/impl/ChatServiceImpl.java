@@ -37,12 +37,6 @@ import java.util.stream.Collectors;
 /**
  * @author Ri
  * @date 2026-10-01 11:14
- *
- * 对话服务：流式与非流式共用同一套前置（定位会话、装载历史、落库用户消息、按需挂 RAG），
- * 只在收尾一步分叉——非流式聚合后返回实体，流式逐帧下发 SSE。
- *
- * 深度思考不是一条独立链路，它只决定读不读输出里的 reasoningContent 元数据，
- * 所以能和 RAG、流式自由组合，不必为组合写分支。
  */
 @Service
 @RequiredArgsConstructor
@@ -67,7 +61,8 @@ public class ChatServiceImpl implements IChatService {
             // 获取AI返回的内容
             AssistantMessage output = response.getResult().getOutput();
             content = StrUtil.nullToEmpty(output.getText());
-            reasoning = reasoningOf(output);
+            // 未开启深度思考时不读取 reasoning：模型可能仍返回该字段，但不应透出与落库
+            reasoning = chatRequest.isDeepThink() ? reasoningOf(output) : null;
         }
 
         // 非流式没有中断/取消路径，落库只此一处，不会重复保存
@@ -84,6 +79,9 @@ public class ChatServiceImpl implements IChatService {
     @Override
     public Flux<ServerSentEvent<String>> stream(ChatRequest chatRequest, Integer userId) {
         Prepared prepared = prepare(chatRequest, userId);
+
+        // 是否透出思考过程：关闭时既不累积也不下发 reasoning 帧
+        boolean deepThink = chatRequest.isDeepThink();
 
         // 累积正文与思考过程，供终止时落库
         StringBuilder aiContent = new StringBuilder();
@@ -106,7 +104,9 @@ public class ChatServiceImpl implements IChatService {
                                 sseStreamSupport.event(SseMessage.CONTENT, content));
                     }
 
-                    String reasoning = reasoningOf(output);
+                    // 未开启深度思考时完全跳过 reasoning：模型仍可能返回该字段，
+                    // 但不应下发、也不应累积落库（否则刷新后会重放出思考块）
+                    String reasoning = deepThink ? reasoningOf(output) : null;
                     if (reasoning != null) {
                         // 累积用原文，下发才过滤纯空白，避免思考过程里的换行丢失
                         aiReasoning.append(reasoning);

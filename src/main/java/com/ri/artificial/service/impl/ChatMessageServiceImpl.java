@@ -1,10 +1,14 @@
 package com.ri.artificial.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ri.artificial.domain.po.ChatMessage;
+import com.ri.artificial.exception.BadRequestException;
 import com.ri.artificial.mapper.ChatMessageMapper;
 import com.ri.artificial.service.IChatMessageService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -44,12 +48,32 @@ public class ChatMessageServiceImpl extends ServiceImpl<ChatMessageMapper, ChatM
     }
 
     @Override
-    public void deleteMessagesAfterTime(Integer userId, Integer messageId, Integer historyId) {
+    @Transactional
+        public void deleteMessagesAfterTime(Integer userId, Integer messageId, Integer historyId) {
+        if(ObjectUtil.isNull(messageId) || ObjectUtil.isNull(historyId)) {
+            throw new BadRequestException("消息ID和会话记录ID不能为空", HttpStatus.HTTP_BAD_REQUEST);
+        }
 
+        // 查到当前要删除的聊天记录
+        ChatMessage msg = lambdaQuery().eq(ChatMessage::getMessageId, messageId)
+                .eq(ChatMessage::getHistoryId, historyId)
+                .eq(ChatMessage::getUserId, userId)
+                .one();
+
+        if (ObjectUtil.isNull(msg)) {
+            throw new BadRequestException("消息不存在", HttpStatus.HTTP_BAD_REQUEST);
+        }
+
+        // 删除比自己创建日期大的所有聊天记录(注意：不要带上MessageId，否则删除不到其它消息)
+        lambdaUpdate().eq(ChatMessage::getHistoryId, historyId)
+                .eq(ChatMessage::getUserId, userId)
+                .ge(ChatMessage::getCreateTime, msg.getCreateTime())
+                .remove();
     }
 
     @Override
-    public void reAnswerUserMessage(Integer userId, Integer messageId, Integer historyId) {
-
+    @Transactional
+    public void reAnswerUserMessage(Integer userId, Integer messageId, Integer historyId, String message) {
+        this.deleteMessagesAfterTime(userId, messageId, historyId);
     }
 }
