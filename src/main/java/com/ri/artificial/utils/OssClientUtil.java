@@ -25,7 +25,7 @@ import java.util.Set;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class OssClient {
+public class OssClientUtil {
     private final OSS ossClient;
 
     @Value("${aliyun.oss.bucket-name}")
