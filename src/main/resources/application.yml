@@ -2,7 +2,10 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: ai-costumer-service
   ai:
+    # AI-API基础配置
     openai:
       base-url: https://dashscope.aliyuncs.com/compatible-mode
       api-key: ${API_KEY_BAILIAN}
@@ -10,15 +13,36 @@ spring:
         options:
           model: glm-5.3
           max-tokens: 1024
+      # 向量模型和维度配置
       embedding:
         options:
-          model: qwen3.7-text-rerank
+          model: qwen3.7-text-embedding
           dimensions: 1024
+    # 向量数据库配置
+    vectorstore:
+      milvus:
+        client:
+          host: "127.0.0.1"
+          port: 19530
+          username: ""
+          password: ""
+        database-name: "default"
+        collection-name: "ai_costumer_service"
+        embedding-dimension: 1024
+        index-type: IVF_FLAT
+        metric-type: cosine
+        initialize-schema: true
+  # MySQL 配置
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/ai_customer?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: zh0604
+  # 设置文件上传最大上限
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
 
 
 ############## Sa-Token 配置 (文档: https://sa-token.com) ##############
@@ -37,3 +61,16 @@ sa-token:
   token-style: uuid
   # 是否输出操作日志
   is-log: true
+
+aliyun:
+  oss:
+    # butcet location area
+    endpoint: oss-cn-wuhan-lr.aliyuncs.com
+    # AK amount to the username
+    access-key-id: LTAI5t8RRmx1cDuQCzo3gRAn
+    # SK amount to the password
+    access-key-secret: ${ALIBABA_OSS_ACCESS_KEY_SECRET_AI_CUSTOMER_SERVICE}
+    # bucket name
+    bucket-name: ai-costumer-service
+    # bucket Access the domain name
+    bucket-url: ai-costumer-service.oss-cn-wuhan-lr.aliyuncs.com

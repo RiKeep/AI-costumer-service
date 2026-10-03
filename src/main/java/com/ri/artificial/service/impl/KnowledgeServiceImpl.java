@@ -19,9 +19,9 @@ import com.ri.artificial.exception.BadRequestException;
 import com.ri.artificial.exception.SystemException;
 import com.ri.artificial.mapper.SysKnowledgeMapper;
 import com.ri.artificial.service.IKnowledgeService;
-import com.ri.artificial.service.IOssClientService;
 import com.ri.artificial.splitter.DocumentSplitter;
 import com.ri.artificial.splitter.SplitterRegistry;
+import com.ri.artificial.utils.OssClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
@@ -53,7 +53,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<SysKnowledgeMapper, SysKno
     /** 预览接口最多返回的分片数：防止大文件产生几千片撑爆响应 */
     private static final int PREVIEW_MAX_CHUNKS = 100;
 
-    private final IOssClientService ossClientService;
+    private final OssClient ossClient;
 
     private final VectorStore vectorStore;
 
@@ -72,7 +72,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<SysKnowledgeMapper, SysKno
     public Result<String> uploadFiles(List<MultipartFile> files, String splitterName, SplitterForm params) {
         Integer userId = StpUtil.getLoginIdAsInt();
         // 上传到oss服务器，拿到所有文件url。
-        List<String> fileUrls = ossClientService.uploadFiles(files);
+        List<String> fileUrls = ossClient.uploadFiles(files);
         // 逐个保存文件信息，分块数后续解析后回填
         for (int i = 0; i < files.size(); i++) {
             MultipartFile file = files.get(i);
@@ -223,7 +223,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<SysKnowledgeMapper, SysKno
         List<String> fileUrls = list.stream().map(SysKnowledge::getFileUrl)
                 .filter(StrUtil::isNotBlank).toList();
         if (CollUtil.isNotEmpty(fileUrls)) {
-            ossClientService.deleteFiles(fileUrls);
+            ossClient.deleteFiles(fileUrls);
         }
         // 逻辑删除数据库记录
         removeByIds(ids);

@@ -1,4 +1,4 @@
-package com.ri.artificial.service.impl;
+package com.ri.artificial.utils;
 
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.ObjectUtil;
@@ -6,11 +6,10 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpStatus;
 import com.aliyun.oss.OSS;
 import com.ri.artificial.exception.UploadFileException;
-import com.ri.artificial.service.IOssClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -21,12 +20,12 @@ import java.util.Set;
 
 /**
  * @author Ri
- * @date 2026-10-02 19:01
+ * @date 2026-10-03 16:47
  */
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
-public class IOssClientServiceImpl implements IOssClientService {
+public class OssClient {
     private final OSS ossClient;
 
     @Value("${aliyun.oss.bucket-name}")
@@ -54,7 +53,6 @@ public class IOssClientServiceImpl implements IOssClientService {
             "application/octet-stream"
     );
 
-    @Override
     public List<String> uploadFiles(List<MultipartFile> files) {
         List<String> urls = new ArrayList<>(files.size());
         for (MultipartFile file : files) {
@@ -81,7 +79,6 @@ public class IOssClientServiceImpl implements IOssClientService {
         return "https://" + bucketUrl + '/' + filename;
     }
 
-    @Override
     public void deleteFiles(List<String> fileUrls) {
         for (String fileUrl : fileUrls) {
             deleteFile(fileUrl);
